@@ -10,11 +10,9 @@ class ProfileController extends Controller
 {
     public function index(Content $content)
     {
-        $route = "/admin/query/orders/search";
         return $content
             ->title('個人簡介')
             ->description('檢視')
             ->body(new Box('', view('profile')));
-
     }
 }

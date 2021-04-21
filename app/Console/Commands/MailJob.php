@@ -16,8 +16,8 @@ use App\Mail\SendMail;
  */
 class MailJob extends Command
 {
-    const MAIL_SUCCESS = 1;
-    const MAIL_FAIL = -1;
+    const MAIL_SEND_SUCCESS = 1;
+    const MAIL_SEND_FAIL    = -1;
 
     /**
      * The name and signature of the console command.
@@ -58,7 +58,7 @@ class MailJob extends Command
                 $mailAddress = env('MAIL_FROM_ADDRESS');
                 Mail::to($mailAddress)->send(new SendMail($mail));
 
-                $mail->send_status = self::MAIL_SUCCESS;
+                $mail->send_status = self::MAIL_SEND_SUCCESS;
                 $mail->save();
             }
 

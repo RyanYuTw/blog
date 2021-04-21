@@ -20,6 +20,9 @@ class MailController extends Controller
     {
     }
 
+    const MAIL_SEND_SUCCESS = 1;
+    const MAIL_SEND_FAIL    = -1;
+
     /**
      * 電子郵件發送
      * @param Request $request
@@ -27,7 +30,6 @@ class MailController extends Controller
      */
     public function send(Request $request)
     {
-
         try {
             //驗證 Header
             $auth = $request->header('Authorization');
@@ -38,7 +40,9 @@ class MailController extends Controller
             //驗證參數
             $service_code = $request->input("service_code") ?? null;
             $from         = $request->input("from") ?? null;
+            $from_name    = $request->input("from_name") ?? null;
             $to           = $request->input("to") ?? null;
+            $to_name      = $request->input("to_name") ?? null;
             $subject      = $request->input("subject") ?? null;
             $body         = $request->input("body") ?? null;
             $csrf         = $request->input("csrf") ?? null;
@@ -61,22 +65,23 @@ class MailController extends Controller
                 throw new Exception("Mail Code not found!", 400);
             }
 
+            // 測試機與正式機主旨標註, 避免混崤
             if (env('APP_ENV') != 'production') {
                 $subject = "測試-" . $subject;
             }
 
             $mailLog = MailModel::create([
-                'service_code'     => $service_code,
-                'from_name'     => null,
-                'from_mail'     => $from ?? null,
-                'to_name'       => null,
-                'to_mail'       => $to ?? null,
-                'subject'       => $subject,
-                'body'          => $body,
+                'service_code' => $service_code,
+                'from_name'    => $from_name,
+                'from_mail'    => $from ?? null,
+                'to_name'      => $to_name,
+                'to_mail'      => $to ?? null,
+                'subject'      => $subject,
+                'body'         => $body,
             ]);
 
             $result = $this->sendMail($mailLog);
-            $mailLog->send_status = ($result) ? 1 : -1;
+            $mailLog->send_status = ($result) ? self::MAIL_SEND_SUCCESS : self::MAIL_SEND_FAIL;
             $mailLog->save();
 
             return response()->json(['code' => 200, 'status' => true, 'message' => 'Mail Send Finished!', 'response' => null], 200, [], JSON_PRETTY_PRINT);
@@ -137,7 +142,9 @@ class MailController extends Controller
         //驗證規則
         $rules = [
             'service_code' => 'required | string | max:10',
+            'from_name'    => 'nullable | string | max:255',
             'from'         => 'required | string | max:255',
+            'to_name'      => 'nullable | string | max:255',
             'to'           => 'required | string | max:255',
             'subject'      => 'nullable | string | max:255',
             'body'         => 'nullable',
