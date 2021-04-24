@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/jquery.Jcrop.min.css" type="text/css" />
 
 <script src="/js/image_crop.js?v={{ filemtime(public_path('js/image_crop.js')) }}"></script>
-<script src="/js/jquery.Jcrop.min.js"></script>
+<script src="/js/jquery.Jcrop.min.js?v={{ filemtime(public_path('js/jquery.Jcrop.min.js')) }}"></script>
 
 <style>
     /* body {
