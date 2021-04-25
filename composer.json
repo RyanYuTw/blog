@@ -12,6 +12,7 @@
         "guzzlehttp/guzzle": "^7.3",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
+        "lcobucci/jwt": "^4.1",
         "sentry/sdk": "^3.1",
         "sentry/sentry-laravel": "^2.4",
         "yajra/laravel-datatables-oracle": "~9.0"

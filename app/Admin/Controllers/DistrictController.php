@@ -6,34 +6,33 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
+use Encore\Admin\Widgets\Form;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\DistrictTw;
 
 class DistrictController extends Controller
 {
-    public function index(Content $content)
+    public function cascading (Request $request, Content $content)
     {
-        return $content
-            ->title('縣市區域選擇器')
-            ->description('範例')
-            ->body(new Box('', view('district')));
-    }
+        $content->title('多層次選擇');
 
+        $form = new Form($request->all());
+        $form->method('GET');
+        $form->action('/examples/district');
 
-    /**
-     * 取得縣市
-     *
-     * @return void
-     */
-    public function getCity()
-    {
-        $cities = DistrictTw::orderBy("display_order")
-                ->groupBy("city_id", "city", "display_order")
-                ->select("city_id", "city")
-                ->get()
-                ->toArray();
+        $form->disableSubmit();
+        $form->disableReset();
 
-        return response()->json($cities);
+        $form->select('city', '縣市')->options(
+            DistrictTw::groupBy('city_id', 'city')->pluck('city', 'city_id')
+        )->load('area', '/admin/examples/district/area');
+
+        $form->select('area', '區域');
+
+        $content->row(new Box('Form', $form));
+        return $content;
+
     }
 
     /**
@@ -44,11 +43,11 @@ class DistrictController extends Controller
      */
     public function getArea(Request $request)
     {
-        $cityId = $request->input("city_id") ?? null;
+        $cityId = $request->get('q') ?? null;
 
         $areas = DistrictTw::where("city_id", $cityId)
             ->orderBy("display_order")
-            ->select("id", "area")
+            ->select(DB::raw("id, area as text"))
             ->get()
             ->toArray();
 

@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 $router->post('/mail/send', 'App\Http\Controllers\MailController@send');
+$router->post('/mail/jwtSend', 'App\Http\Controllers\MailController@jwtSend');
