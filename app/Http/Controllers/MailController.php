@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Mail as MailModel;
 use App\Mail\SendMail;
 
-use App\Http\Controllers\Services\JwtService;
+use App\Services\JwtService;
 
 use DateTimeImmutable;
 use Lcobucci\Clock\FrozenClock;
@@ -122,61 +122,6 @@ class MailController extends Controller
         }
     }
 
-
-    public const CURRENT_TIME = 100000;
-
-
-    /**
-     * Jwt token 測試
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function jwtSend(Request $request)
-    {
-        $header = $request->header('authorization');
-        // 產生 Jwt Token
-        $jwt = JwtService::getInstance();
-        // $options = [
-        //     'test1' => 'test1',
-        //     'test2' => 'test2',
-        //     'status' => 200,
-        // ];
-
-        // $token = $jwt::generate($options);
-
-        // $token->headers(); // Retrieves the token headers
-        // $token->claims(); // Retrieves the token claims
-
-        // echo $token->headers()->get('foo'); // will print "bar"
-        // echo $token->claims()->get('test2'); // will print "http://example.com"
-        // echo $token->claims()->get('uid'); // will print "1"
-
-        // $receiveToken = $token->toString(); // The string representation of the object is a JWT string
-
-        // 解析 Token
-        $config = $jwt::configInit();
-        $parseToken = $config->parser()->parse($header);
-        $parseToken->headers(); // Retrieves the token headers
-        $parseToken->claims(); // Retrieves the token claims
-        // dd($parseToken->claims()->get('test1'));
-
-        $ddtoken = $config->parser()->parse('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImZvbyI6ImJhciJ9.eyJ0ZXN0MSI6InRlc3QxIiwidGVzdDIiOiJ0ZXN0MiIsInN0YXR1cyI6MjAwLCJpYXQiOjE2MTkzNTc4NjYuMDE1MDU2LCJleHAiOjE2MTkzNTg3NjYuMDE1MDU2fQ.ICo6CbQEaLzqH2ACiAwxJ3PTpbR-zqBAj6zUIZdE9g8');
-
-        // 驗證 Token
-        $clock = new FrozenClock(new DateTimeImmutable('@' . self::CURRENT_TIME));
-
-        $constraints = [
-            new IdentifiedBy('1'),
-            new PermittedFor('http://client.abc.com'),
-            new IssuedBy('http://issuer.abc.com', 'http://api.abc.com'),
-            new LooseValidAt($clock),
-        ];
-
-        if (! $config->validator()->validate($parseToken, ...$constraints)) {
-            throw new \RuntimeException('No way!');
-        }
-    }
 
     /**
      * 驗證 Header

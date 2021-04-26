@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 $router->post('/mail/send', 'App\Http\Controllers\MailController@send');
 $router->post('/mail/jwtSend', 'App\Http\Controllers\MailController@jwtSend');
+$router->get('/jwt/get_token', 'App\Http\Controllers\JwtController@getToken');
+$router->get('/jwt/validate_token', 'App\Http\Controllers\JwtController@validateToken');

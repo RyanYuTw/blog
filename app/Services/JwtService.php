@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Services;
+namespace App\Services;
 
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
